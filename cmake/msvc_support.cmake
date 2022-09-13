@@ -24,12 +24,11 @@ function(rpclib_msvc_support)
       "ASIO_HAS_STD_SHARED_PTR"
       "ASIO_HAS_STD_TYPE_TRAITS")
 
-    # MSVC static runtime support
+    # MSVC static runtime support (old cmake variant and may not work properly)
     #
     # While this pollutes global flags (when using add_library), you would not want to
-    # build with a disparity anyway. (also, CMake still has no support for this, so you
-    # would end up doing something like this yourself).
-    if (RPCLIB_MSVC_STATIC_RUNTIME)
+    # build with a disparity anyway.
+    if (RPCLIB_MSVC_STATIC_RUNTIME AND ${CMAKE_VERSION} VERSION_LESS "3.15.0")
       set(variables
         CMAKE_C_FLAGS_DEBUG
         CMAKE_C_FLAGS_MINSIZEREL
@@ -49,7 +48,6 @@ function(rpclib_msvc_support)
           string(REGEX REPLACE "/MD" "/MT" ${variable} "${${variable}}")
         endif()
       endforeach()
-
     endif()
   endif()
 endfunction()

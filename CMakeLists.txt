@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
+cmake_policy(SET CMP0091 NEW)
+# set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 project(rpc VERSION 2.3.0)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -89,6 +91,11 @@ file(GLOB_RECURSE DEP_HEADERS
 set(DEP_SOURCES
   ${RPCLIB_DEPENDENCIES}/src/format.cc
   ${RPCLIB_DEPENDENCIES}/src/posix.cc)
+
+# MSVC static runtime support (modern cmake variant)
+if(MSVC AND RPCLIB_MSVC_STATIC_RUNTIME AND NOT ${CMAKE_VERSION} VERSION_LESS "3.15.0") 
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 
 add_library(${PROJECT_NAME}
   lib/rpc/dispatcher.cc
@@ -209,6 +216,8 @@ if(RPCLIB_BUILD_EXAMPLES)
   add_subdirectory(examples/mandelbrot)
   add_subdirectory(examples/calculator)
 endif()
+
+
 
 #
 # Cmake Package
